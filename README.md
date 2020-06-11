@@ -1,3 +1,2 @@
 # cvp-kafka-consumer
-# cvp-kafka-consumer
-# cvp-kafka-consumer
+CVP vehicle event data consumer
