@@ -4,7 +4,8 @@ import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 /**
- * Class that represents IoT vehicle data
+ * Class that represents IoT vehicle data of simulator
+ * Comment this when deployed on QA
  * 
  * @author Pallavi Shetty
  * @since May 2020

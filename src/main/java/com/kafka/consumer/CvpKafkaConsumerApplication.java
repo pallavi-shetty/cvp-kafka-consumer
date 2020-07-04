@@ -1,24 +1,17 @@
 package com.kafka.consumer;
 
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import org.apache.kafka.common.errors.WakeupException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import com.kafka.consumer.vo.VehicleData;
 import org.springframework.boot.SpringApplication;
+import org.springframework.context.annotation.Bean;
+import java.util.concurrent.atomic.AtomicBoolean;
+import org.apache.kafka.common.errors.WakeupException;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.annotation.TopicPartition;
-import org.springframework.kafka.support.KafkaHeaders;
-import org.springframework.messaging.handler.annotation.Header;
-import org.springframework.messaging.handler.annotation.Payload;
-
-import com.kafka.consumer.vo.VehicleData;
 
 /**
  * @author Pallavi Shetty
@@ -61,11 +54,28 @@ public class CvpKafkaConsumerApplication {
 
 		private CountDownLatch vehicleDataLatch = new CountDownLatch(1);
 
-		@KafkaListener(topics = "${vehicleData.topic.name}",  groupId = "vehicleData", containerFactory = "vehicleDataKafkaListenerContainerFactory")
-		public void vehicleDataListener(VehicleData VehicleData) {
-			System.out.println("Recieved message: " + VehicleData);
+		@KafkaListener(topics = "${kafka.consumer.topics.telemetryTopic}", groupId = "fleetman-geofence-service-group", containerFactory = "vehicleDataKafkaListenerContainerFactory")
+		public void vehicleDataListener(VehicleData vehicleData) {
+			System.out.println(
+					"Recieved message: " + vehicleData.getVehicleId() + " eventDate " + vehicleData.getEventDateTime()
+							+ " lattitude " + vehicleData.getLatitude() + " longitude " + vehicleData.getLongitude());
+
+			logger.info(
+					"Recieved message: " + vehicleData.getVehicleId() + " eventDate " + vehicleData.getEventDateTime()
+							+ " lattitude " + vehicleData.getLatitude() + " longitude " + vehicleData.getLongitude());
 			this.vehicleDataLatch.countDown();
 		}
+
+		/*
+		 * @KafkaListener(topics = "${vehicleData.topic.name}", groupId = "vehicleData",
+		 * containerFactory = "vehicleDataKafkaListenerContainerFactory") public void
+		 * listen(@Payload String json) throws IOException { VehicleData telemetryData =
+		 * this.mapper.readValue(json, VehicleData.class);
+		 * logger.debug("Telemetry Message received : " + telemetryData);
+		 * 
+		 * 
+		 * }
+		 */
 
 //		@KafkaListener(
 //				topics = "${vehicleData.topic.name}",
